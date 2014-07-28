@@ -32,6 +32,7 @@ function handleDirections(response, status){
 	var routeCoords = null;
 
 	if (status == google.maps.DirectionsStatus.OK) {
+		$("#map-container").removeClass("invisible");
 		directionsDisplay.setDirections(response);
 
 		console.log("Received valid directions!!");
