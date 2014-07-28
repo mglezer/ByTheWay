@@ -1,0 +1,53 @@
+
+<html>
+
+<head>
+<title>By The Way</title>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+</head>
+
+<body>
+<h1>By The Way</h1>
+<h2>A Food/Coffee/Gas Finder for Road Trips/Commutes</h2>
+
+<form id="form">
+	<table>
+		<tr>
+			<td>Start</td>
+			<td><input id="start" type="text" value = "Seattle, WA"></td>
+		</tr>
+		<tr>
+			<td>End</td>
+			<td><input id="end" type="text" value = "San Francisco, CA"></td>
+		</tr>
+		<tr>
+			<td><input id="submit" type="submit" value="Submit"></td>
+		</tr>
+	</table>
+</form>
+
+<div id="warnings_panel"></div>
+<div id="test"></div>
+
+<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBM3-1Uxk0lWEIDYyD_qzigEGwa9aWiBYM">
+</script>
+
+<script src="oath-signature.js"></script>
+<script src="polyline.js"></script>
+<script src="main.js"></script>
+<script src="directions.js"></script>
+<script type="text/javascript">
+	$(document).ready(function(){
+		console.log("Called ready");
+		$("#form").submit(function(){
+			var $start = $("#start");
+			var $end = $("#end");
+			main($start, $end);
+			return false;
+		});
+	});
+</script>
+
+</body>
+
+</html>

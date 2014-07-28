@@ -1,0 +1,102 @@
+<!doctype html>
+
+<html>
+
+<head>
+<title>By The Way</title>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+<link rel="stylesheet" type="text/css" href="css/index.css">
+<!-- <link href='http://fonts.googleapis.com/css?family=Droid+Sans' rel='stylesheet' type='text/css'>
+ --></head>
+
+<body>
+<h1>By The Way</h1>
+<h2>A Food/Coffee/Gas Finder for Road Trips/Commutes</h2>
+
+<form id="tripForm" name="tripForm" action="trip" method="get">
+	<table>
+		<tr>
+			<td>Start</td>
+			<td><input id="start" type="text" name="begin" value = "Seattle, WA"></td>
+		</tr>
+		<tr>
+			<td>End</td>
+			<td><input id="end" type="text" name="end" value = "San Francisco, CA"></td>
+		</tr>
+		<tr>
+			<td>Max Distance</td>
+			<td>
+				<select name="max_distance" id="max_distance" form="tripForm">
+					<option value = "1">1 mile</option>
+					<option value = "5" selected="selected">5 miles</option>
+					<option value = "10">10 miles</option>
+					<option value = "100">unlimited</option>
+				</select>
+			</td>
+		</tr>
+		<tr>
+			<td>Search</td>
+			<td><input id="search_term" type="text" name="search_term" value = "Restaurants"></td><td class="explanation">E.g., restaurants, coffee, bbq</td>
+		</tr>
+		<tr>
+			<td>Exact match</td>
+			<td><input type="checkbox" name="exact_match" id="exact_match_box" value = "true">
+			</td>
+		<tr>
+			<td><input id="submit" type="submit" value="Submit"></td>
+		</tr>
+	</table>
+</form>
+
+<div id="warnings_panel"></div>
+<div id="test"></div>
+<div id="outer-container">
+	<div id="results-container"></div>
+	<div id="map-container">
+		<div id="my-map-canvas"></div>
+	</div>
+</div>
+
+<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBM3-1Uxk0lWEIDYyD_qzigEGwa9aWiBYM">
+</script>
+
+<script src="js/oauth-signature.js"></script>
+<script src="js/polyline.js"></script>
+<script src="js/main.js"></script>
+<script src="js/directions.js"></script>
+<script type="text/javascript">
+	$(document).ready(function(){
+		console.log("Called ready");
+		$("#tripForm").submit(function(){
+			var $start = $("#start");
+			var $end = $("#end");
+			initialize();
+			main($start, $end);
+			// $.get("trip", $("#tripForm").serialize(), function (data){
+			// 	$("#test").html(data);
+			// });
+			return false;
+		});
+
+		setUpScrolling();
+	});
+
+	function setUpScrolling(){
+		var s = $("#my-map-canvas");
+		var pos = s.position();                    
+		$(window).scroll(function() {
+			s.css({'position': ''});
+		    var windowpos = $(window).scrollTop();
+		    // s.html("Distance from top:" + pos.top + "<br />Scroll position: " + windowpos);
+		    if (windowpos >= pos.top) {
+		        s.addClass("stick");
+		    } else {
+		        s.removeClass("stick"); 
+		    }
+		});
+	}
+</script>
+
+</body>
+
+</html>

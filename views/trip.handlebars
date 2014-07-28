@@ -1,0 +1,27 @@
+<!doctype html>
+
+<html>
+<head>
+
+</head>
+<body>
+<h2>Here are the best places on your route: </h2>
+<div>
+	<table> 
+		<tr>
+			<th>Name</th>
+			<th>Rating</th>
+			<th>Image</th>
+		</tr>
+		{{#each data}} 
+			<tr>
+				<td><a href="{{this.url}}">{{this.name}}</a></td>
+				<td><img src="{{this.rating_img_url_small}}"></img></td>
+				<td><img src="{{this.image_url}}"</img></td>
+			</tr>
+		{{/each}}
+	</table>
+</div>
+</body>
+
+</html>

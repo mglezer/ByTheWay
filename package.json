@@ -1,0 +1,17 @@
+{
+    "name": "by-the-way",
+    "description": "road trip planner",
+    "author": "Mathan Glezer",
+    "version": "0.0.1",
+
+    "private": true,
+    
+    "dependencies": {
+        "express": "4.6.1",
+        "express3-handlebars": "*",
+        "yelp": "*",
+        "googleapis": "*",
+        "googlemaps": "*",
+        "body-parser": "*"
+    }
+}
