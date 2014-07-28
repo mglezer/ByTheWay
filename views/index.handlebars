@@ -66,18 +66,8 @@
 <script src="js/directions.js"></script>
 <script type="text/javascript">
 	$(document).ready(function(){
-		console.log("Called ready");
-		$("#tripForm").submit(function(){
-			var $start = $("#start");
-			var $end = $("#end");
-			initialize();
-			main($start, $end);
-			// $.get("trip", $("#tripForm").serialize(), function (data){
-			// 	$("#test").html(data);
-			// });
-			return false;
-		});
-
+		var requestManager = new RequestManager($("#tripForm"), $("#start"), 
+					   $("#end"), $("#my-map-canvas"), $("#results-container"));
 		setUpScrolling();
 	});
 

@@ -1,46 +1,42 @@
 
-
-function main($start, $end) {
-	requestDirections($start, $end);
-}
-
-
-function ResultsDisplayer($container){
+function ResultsDisplayer($container, $map_canvas){
 	this.$container = $container;
+	this.results = null;
+	this.geocoder = new google.maps.Geocoder();
+	this.$map_canvas = $map_canvas;
+	this.map = new google.maps.Map(this.$map_canvas[0], {});
+
+	this.markers = [];
 }
 
+ResultsDisplayer.prototype.handleRecs = function(data){
+	this.results = data;
+	this.updateDisplay();
+}
 
-function handleRecs(data){
-	console.log("Inside handleRecs");
-	console.log("Data received from server:");
-	console.log(data);
-	if (data == null){
+ResultsDisplayer.prototype.clearMarkers = function(){
+	for (var i = 0; i < this.markers.length; i++){
+		var marker = this.markers[i];
+		marker.setMap(null);
+	}
+	this.markers = [];
+}
+
+ResultsDisplayer.prototype.updateDisplay = function(){
+	this.clearMarkers();
+
+	console.log(this.results);
+	if (this.results == null){
 		$("#test").text("Error: Unable to find route/recommendations");
 	}
 	else{
-		$("#results-container").empty(); //clear out the old results
+		this.$container.empty(); //clear out the old results
 		g = document.createElement('table');
 		g.setAttribute("id", "results-table");
 
 		$("#results-container").append(g);
-		// $("#results-table").append("<tr> \
-		// 								<th> Ranking </th> \
-		// 								<th> Name </th> \
-		// 								<th> Image </th> \
-		// 								<th> Rating </th> \
-		// 								<th> Categories </th> \
-		// 							</tr>");
-
-		for (var i = 0; i < data.topListings.length; i++){
-			var listing = data.topListings[i];
-			// $("#results-table").append("<tr id = '" + listing['id'] + "'>"
-			// 								+ "<td> " + (i + 1) + ".</td>"
-			// 								+ "<td> " + "<a href='" + listing['url'] + "'>" + listing['name'] + "</a></td>"
-			// 								+ "<td> <img src='" + listing['image_url'] + "'></img> </td>" 
-			// 								+ "<td> <img src='" + listing['rating_img_url'] + "'></img></td>"
-			// 								+ "<td> " + listing['categories'][0] + "</td>"
-			// 							+ "</tr>");
-
+		for (var i = 0; i < this.results.topListings.length; i++){
+			var listing = this.results.topListings[i];
 			$("#results-table").append(
 				"<tr class='listing_container' id = '" + listing['id'] + "'>"
 				+"<td>"
@@ -57,12 +53,12 @@ function handleRecs(data){
 				+ "</td>"
 				+ "</tr>");
 
-			markListing(listing, i + 1);
+			this.markListing(listing, i + 1);
 		}
 	}
 }
 
-function markListing(listing, rank){
+ResultsDisplayer.prototype.markListing = function(listing, rank){
 	var marker;
 	if (listing['location']['coordinate'] != undefined){
 		var myLatlng = new google.maps.LatLng(
@@ -73,9 +69,10 @@ function markListing(listing, rank){
 
 		marker = new google.maps.Marker({
 		      position: myLatlng,
-		      map: map,
+		      map: this.map,
 		      title: listing['name']
 		});
+		this.markers.push(marker);
 
 		var contentString = "<img src = '" + listing['image_url'] + "'></img>"
 							+ "<div>"
@@ -88,7 +85,7 @@ function markListing(listing, rank){
 		});
 
 		google.maps.event.addListener(marker, 'click', function(){
-			infowindow.open(map, marker);
+			infowindow.open(this.map, marker);
 		});
 	}
 
@@ -101,14 +98,15 @@ function markListing(listing, rank){
 				+ ", " + listing['location']['city'] 
 				+ ", " + listing['location']['state_code'] 
 				+ " " + listing['location']['postal_code'];
-		geocoder.geocode( {address: streetAddress},
+		this.geocoder.geocode( {address: streetAddress},
 			function(results, status) {
 			     if (status == google.maps.GeocoderStatus.OK) {
 			       marker = new google.maps.Marker({
-			           map: map,
+			           map: this.map,
 			           position: results[0].geometry.location,
 			           title: listing['name']
 			       });
+			       this.markers.push(marker);
 
 			       var contentString = "<img src = '" + listing['image_url'] + "'></img>"
 			       					+ "<div>"
@@ -121,13 +119,13 @@ function markListing(listing, rank){
 			       });
 
 			       google.maps.event.addListener(marker, 'click', function(){
-			       	infowindow.open(map, marker);
+			       	infowindow.open(this.map, marker);
 			       });
 
 			     } else {
 			       alert("Geocode was not successful for the following reason: " + status);
 			     }
-		  });
+		  }.bind(this));
 	}
 
 	else return;

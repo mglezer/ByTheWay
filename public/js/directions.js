@@ -1,39 +1,48 @@
-var directionsService = new google.maps.DirectionsService();
-var directionsDisplay;
-var map;
-var geocoder;
-var resultsDisplayer;
 
-function initialize() {
-	directionsDisplay = new google.maps.DirectionsRenderer();
-	geocoder = new google.maps.Geocoder();
-	var chicago = new google.maps.LatLng(41.850033, -87.6500523);
-	var mapOptions = {
-		// zoom: 7,
-		// center: chicago
-	}
-	map = new google.maps.Map(document.getElementById("my-map-canvas"), mapOptions);
-	directionsDisplay.setMap(map);
-	resultsDisplayer = new ResultsDisplayer();
+function RequestManager($form, $start, $end, $map_canvas, $results_container) {
+	this.$form = $form;
+	this.$start = $start;
+	this.$end = $end;
+	this.$map_canvas = $map_canvas;
 
+	this.directionsService = new google.maps.DirectionsService();
+	this.directionsDisplay = new google.maps.DirectionsRenderer();
+
+	this.resultsDisplayer = new ResultsDisplayer($results_container, $map_canvas);
+	this.directionsDisplay.setMap(this.resultsDisplayer.map);
+	this.initialize();
+
+	//Take over form submissions
+	var self = this;
+	$form.submit(function(){
+		self.requestDirections();
+		return false;
+	});
 }
 
-function requestDirections($start, $end){
+RequestManager.prototype.initialize = function() {
+}
+
+RequestManager.prototype.reset = function(){
+	initialize();
+}
+
+RequestManager.prototype.requestDirections = function(){
 	var request = {
-		origin: $start.val(),
-		destination: $end.val(),
+		origin: this.$start.val(),
+		destination: this.$end.val(),
 		travelMode: google.maps.TravelMode.DRIVING
 	};
 
-	directionsService.route(request, handleDirections);
+	this.directionsService.route(request, this.handleDirections.bind(this));
 }
 
-function handleDirections(response, status){
+RequestManager.prototype.handleDirections = function(response, status){
 	var routeCoords = null;
 
 	if (status == google.maps.DirectionsStatus.OK) {
 		$("#map-container").removeClass("invisible");
-		directionsDisplay.setDirections(response);
+		this.directionsDisplay.setDirections(response);
 
 		console.log("Received valid directions!!");
 		var warnings = document.getElementById("warnings_panel");
@@ -42,11 +51,6 @@ function handleDirections(response, status){
 		var routePolyLine = response.routes[0].overview_polyline;
 		routeCoords = polyline.decode(routePolyLine);
 		console.log(JSON.stringify(routeCoords));
-		//Send routeCoords back to the server
-		// $.post("trip", {directions: JSON.stringify(routeCoords),
-		// 	search_term: $("#search_term").val(),
-		// 	exact_match: $("#exact_match_box").is(':checked'),
-		// 	max_distance: $("#max_distance").val()}, handleRecs);
 
 		$.ajax({
 		  type: "POST",
@@ -55,7 +59,7 @@ function handleDirections(response, status){
 			search_term: $("#search_term").val(),
 			exact_match: $("#exact_match_box").is(':checked'),
 			max_distance: $("#max_distance").val()},
-		  success: handleRecs,
+		  success: this.resultsDisplayer.handleRecs.bind(this.resultsDisplayer),
 		  beforeSend: function(){
 		  	$("#results-container").empty();
 		  	var g = document.createElement("img");
