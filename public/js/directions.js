@@ -55,7 +55,8 @@ RequestManager.prototype.handleDirections = function(response, status){
 		$.ajax({
 		  type: "POST",
 		  url: "trip",
-		  data: {directions: JSON.stringify(routeCoords),
+		  data: {directions: JSON.stringify({coordinates: routeCoords, 
+		  									 distance: response.routes[0].legs[0].distance.value}),
 			search_term: $("#search_term").val(),
 			exact_match: $("#exact_match_box").is(':checked'),
 			max_distance: $("#max_distance").val()},

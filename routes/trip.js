@@ -17,7 +17,9 @@ var UNLIMITED_MILES = 100;
 
 var GRANULARITY = 10,
 	NUM_LISTINGS = 10,
-	SHOW_ALL = -1 //sentinal value for showing all results;
+	SHOW_ALL = -1, //sentinal value for showing all results;
+	MILES_PER_SEGMENT = 20,
+	SEARCH_RADIUS = 32186.9 //20 miles, in meters;
 
 var ratings,
 	pointsCompleted;
@@ -30,6 +32,15 @@ function toMeters(miles){
 	return miles*METERS_PER_MILE;
 }
 
+function getDistance(route){
+	return toMiles(route.distance);
+}
+
+function pointsPerSegment(route){
+	var numSegments = getDistance(route)/MILES_PER_SEGMENT;
+	return Math.floor(route.coordinates.length/numSegments);
+}
+
 exports.viewPost = function(req, res){
 	var route = JSON.parse(req.param('directions'));
 	var search_term = req.param('search_term');
@@ -37,7 +48,7 @@ exports.viewPost = function(req, res){
 	ratings = [];
 	pointsCompleted = 0;
 
-	if (route instanceof Array){
+	if (route.coordinates instanceof Array){
 		console.log("Successfully parsed directions array!");
 	}
 	console.log(req);
@@ -47,10 +58,11 @@ exports.viewPost = function(req, res){
 	var maxDistance = parseInt(req.param('max_distance'));
 
 	console.log("Max distance is: " + req.param('max_distance'));
+	var pps = pointsPerSegment(route);
 
-	for (var i = 0; i < route.length; i += GRANULARITY){
+	for (var i = 0, l = route.coordinates.length; i < l; i += pps){
 		//Only search the last 
-		var routeLengthRounded = route.length - route.length % GRANULARITY;
+		var routeLengthRounded = l - (l % pps);
 
 		if (i > 0 && i < routeLengthRounded){
 			investigatePoint(i, search_term, exactMatch, maxDistance, route, res);
@@ -59,12 +71,14 @@ exports.viewPost = function(req, res){
 }
 
 function investigatePoint(i, searchTerm, exactMatch, maxDistance, route, res){
-	yelp.search({term: searchTerm, ll: route[i][LAT] + ", " + route[i][LONG]}, function(error, data) {
+	yelp.search({term: searchTerm, 
+		radius_filter: SEARCH_RADIUS,
+		ll: route.coordinates[i][LAT] + ", " + route.coordinates[i][LONG]}, function(error, data) {
 		//Find the highest rated restaurant around this leg of the trip
 		// console.log(error);
 		// console.log(data);
 
-		var numListingsShown = exactMatch ? SHOW_ALL : NUM_LISTINGS;
+		var numListingsShown = NUM_LISTINGS; //exactMatch ? SHOW_ALL : NUM_LISTINGS;
 		var filteredListings = filter(data.businesses, searchTerm, exactMatch, maxDistance);
 		var localTopListings = getTop(numListingsShown, filteredListings);
 
@@ -111,14 +125,8 @@ function filter(listings, searchTerm, exactMatch, maxDistance){
 }
 
 
-//For now, we are checking every point on the route for 
-//restaurants.
 function lookupComplete(route){
-	// console.log("route.length: " + route.length);
-	// console.log("Actual ratings.length: " + ratings.length);
-	// console.log("Required ratings.length: " + (Math.floor(route.length/GRANULARITY) - 1));
-	// return Math.floor(route.length/GRANULARITY) - 1 == ratings.length;
-	return pointsCompleted == Math.floor(route.length/GRANULARITY) - 1;
+	return pointsCompleted == Math.floor(route.coordinates.length/pointsPerSegment(route)) - 1;
 }
 
 function getTop(n, listings){
