@@ -52,6 +52,8 @@ RequestManager.prototype.handleDirections = function(response, status){
 		routeCoords = polyline.decode(routePolyLine);
 		console.log(JSON.stringify(routeCoords));
 
+		console.log("Points in the polyline: " + routeCoords.length);
+
 		$.ajax({
 		  type: "POST",
 		  url: "trip",

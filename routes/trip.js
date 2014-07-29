@@ -51,13 +51,14 @@ exports.viewPost = function(req, res){
 	if (route.coordinates instanceof Array){
 		console.log("Successfully parsed directions array!");
 	}
-	console.log(req);
 	var exactMatch = (req.param('exact_match') === 'true');
 	console.log("Exact match: " + exactMatch);
 
 	var maxDistance = parseInt(req.param('max_distance'));
-
+	console.log("Total miles of trip: " + toMiles(route.distance));
+	console.log("Number of segments: " + getDistance(route)/MILES_PER_SEGMENT);
 	console.log("Max distance is: " + req.param('max_distance'));
+	console.log("Points per segment: " + pointsPerSegment(route));
 	var pps = pointsPerSegment(route);
 
 	for (var i = 0, l = route.coordinates.length; i < l; i += pps){
@@ -114,7 +115,6 @@ function filter(listings, searchTerm, exactMatch, maxDistance){
 		var listing = listings[i];
 		if (!exactMatch || listing['name'].indexOf(searchTerm) > -1){
 			var distance = toMiles(parseInt(listing['distance']));
-			console.log("Distance of restaurant is " + distance + " in miles.");
 			if (maxDistance == UNLIMITED_MILES || distance <= maxDistance){
 				ret.push(listing);
 			}
