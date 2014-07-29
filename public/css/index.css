@@ -1,3 +1,12 @@
+body {
+    font-family: Helvetica;
+    font-size: 14px;
+}
+
+.comment {
+    color: gray;
+}
+
 div#wrapper {
     margin:0 auto;
     width:900px;
@@ -64,6 +73,7 @@ div#sticker {
 .desc_container {
     width: 75%;
     float: right;
+    color: #555;
 }
 
 h3.rest_title{
@@ -71,11 +81,12 @@ h3.rest_title{
     font-size: 20px;
     margin-top:0;
     margin-bottom: 5px;
+    color: black;
 }
 
 .rest_category{
-    color: gray;
-    font-family: "Helvetica";
+/*    color: gray;
+*/    font-family: "Helvetica";
     font-size: 14px;
 }
 
