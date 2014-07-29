@@ -110,18 +110,20 @@ function investigatePoint(i, searchTerm, exactMatch, maxDistance, route, res){
 }
 
 function filter(listings, searchTerm, exactMatch, maxDistance){
-	var ret = [];
-	for (var i = 0; i < listings.length; i++){
-		var listing = listings[i];
-		if (!exactMatch || listing['name'].indexOf(searchTerm) > -1){
-			var distance = toMiles(parseInt(listing['distance']));
-			if (maxDistance == UNLIMITED_MILES || distance <= maxDistance){
-				ret.push(listing);
-			}
-		}
-	}
+	// var ret = [];
+	// for (var i = 0; i < listings.length; i++){
+	// 	var listing = listings[i];
+	// 	if (!exactMatch || listing['name'].indexOf(searchTerm) > -1){
+	// 		var distance = toMiles(parseInt(listing['distance']));
+	// 		if (maxDistance == UNLIMITED_MILES || distance <= maxDistance){
+	// 			ret.push(listing);
+	// 		}
+	// 	}
+	// }
 
-	return ret;
+	// return ret;
+
+	return listings;
 }
 
 
