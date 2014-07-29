@@ -7,7 +7,10 @@ function ResultsDisplayer($container, $map_canvas){
 	this.map = new google.maps.Map(this.$map_canvas[0], {});
 
 	this.markers = [];
+	this.lowIndex = 0;
 }
+
+ResultsDisplayer.ENTRIES_PER_PAGE = 10;
 
 ResultsDisplayer.prototype.handleRecs = function(data){
 	this.results = data;
@@ -35,8 +38,12 @@ ResultsDisplayer.prototype.updateDisplay = function(){
 		g.setAttribute("id", "results-table");
 
 		$("#results-container").append(g);
-		for (var i = 0; i < this.results.topListings.length; i++){
-			var listing = this.results.topListings[i];
+		var numListingsRemaining = Math.min(ResultsDisplayer.ENTRIES_PER_PAGE, 
+			this.results.topListings.length - this.lowIndex);
+
+		for (var i = 0; i < numListingsRemaining; i++){
+			var ranking = this.lowIndex + i;
+			var listing = this.results.topListings[this.lowIndex + i];
 			$("#results-table").append(
 				"<tr class='listing_container' id = '" + listing['id'] + "'>"
 				+"<td>"
@@ -46,7 +53,7 @@ ResultsDisplayer.prototype.updateDisplay = function(){
 						+ "'></img>" 
 					+ "</div>"
 					+ "<div class='desc_container'>"
-						+ "<h3 class='rest_title'>" + (i + 1) + ". <a href='" + listing['url'] + "' target='_blank'>" + listing['name'] + "</a></h3>"
+						+ "<h3 class='rest_title'>" + (ranking + 1) + ". <a href='" + listing['url'] + "' target='_blank'>" + listing['name'] + "</a></h3>"
 						+ "<div class='rest_rating'><img class='rest_rating_image' src='" + listing['rating_img_url'] + "'></img></div>"
 						+ "<span class='rest_category'>" + listing['categories'][0][0] + "</span>"
 					+ "</div>"
@@ -54,6 +61,30 @@ ResultsDisplayer.prototype.updateDisplay = function(){
 				+ "</tr>");
 
 			this.markListing(listing, i + 1);
+		}
+
+		g = document.createElement('div');
+		g.setAttribute("id", "results-stepper");
+		$("#results-container").append(g);
+
+		if (this.lowIndex >= ResultsDisplayer.ENTRIES_PER_PAGE){
+			$("#results-stepper").append(
+				"<a id='prev_stepper'>Prev</a>");
+			$("#prev_stepper").click(function(event){
+				event.preventDefault();
+				this.lowIndex -= ResultsDisplayer.ENTRIES_PER_PAGE;	
+				this.updateDisplay();
+			}.bind(this));
+		}
+
+		if (this.lowIndex + ResultsDisplayer.ENTRIES_PER_PAGE < this.results.topListings.length){
+			$("#results-stepper").append(
+				"<a id='next_stepper'>Next</a>");
+			$("#next_stepper").click(function(event){
+				event.preventDefault();
+				this.lowIndex += ResultsDisplayer.ENTRIES_PER_PAGE;	
+				this.updateDisplay();
+			}.bind(this));
 		}
 	}
 }
