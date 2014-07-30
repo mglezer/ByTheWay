@@ -163,11 +163,15 @@ ResultsDisplayer.prototype.markListing = function(listing, rank){
 	else return;
 
 	$("#" + listing['id']).mouseenter(function(){
-		marker.setIcon('http://maps.google.com/mapfiles/kml/paddle/grn-stars.png');
+		if (marker !== undefined){
+			marker.setIcon('http://maps.google.com/mapfiles/kml/paddle/grn-stars.png');
+		}
 	});
 
 	$("#" + listing['id']).mouseleave(function(){
-		marker.setIcon();
+		if (marker !== undefined){
+			marker.setIcon();
+		}
 	});
 
 
