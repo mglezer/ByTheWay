@@ -120,7 +120,7 @@ function investigatePoint(i, searchTerm, exactMatch, maxDistance, route, res){
 				// console.log("Ratings is not null!");
 				// console.log(ratings);
 			}
-			var globalTopListings = getTop(numListingsShown, ratings, exactMatch);
+			var globalTopListings = getTop(ratings, exactMatch);
 			console.log("Found global maximum!");
 			// res.render('trip', {data: globalTopListings});
 			res.json({topListings: globalTopListings});
@@ -155,7 +155,7 @@ function lookupComplete(route){
 	}
 }
 
-function getTop(n, listings, exactMatch){
+function getTop(listings, exactMatch){
 	var uniqListings = getUnique(listings);
 
 	if (exactMatch){
