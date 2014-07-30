@@ -19,7 +19,8 @@ var GRANULARITY = 10,
 	NUM_LISTINGS = 10,
 	SHOW_ALL = -1, //sentinal value for showing all results;
 	MILES_PER_SEGMENT = 20,
-	SEARCH_RADIUS = 32186.9; //20 miles, in meters
+	SEARCH_RADIUS = 32186.9,
+	MIN_NUM_SEGMENTS = 2; //20 miles, in meters
 
 var ratings,
 	pointsCompleted;
@@ -36,9 +37,13 @@ function getDistance(route){
 	return toMiles(route.distance);
 }
 
+function getNumSegments(route){
+	return Math.floor(route.coordinates.length/pointsPerSegment(route));
+}
+
 function pointsPerSegment(route){
-	var numSegments = getDistance(route)/MILES_PER_SEGMENT;
-	return Math.floor(route.coordinates.length/numSegments);
+	var approxNumSegments = Math.floor(getDistance(route)/MILES_PER_SEGMENT);
+	return Math.floor(route.coordinates.length/approxNumSegments);
 }
 
 exports.viewPost = function(req, res){
@@ -56,7 +61,8 @@ exports.viewPost = function(req, res){
 
 	var maxDistance = parseInt(req.param('max_distance'));
 	console.log("Total miles of trip: " + toMiles(route.distance));
-	console.log("Number of segments: " + getDistance(route)/MILES_PER_SEGMENT);
+	console.log("Number of segments: " + getNumSegments(route));
+	console.log("Total number of points: " + (getNumSegments(route) - 1));
 	console.log("Max distance is: " + req.param('max_distance'));
 	console.log("Points per segment: " + pointsPerSegment(route));
 	var pps = pointsPerSegment(route);
@@ -65,7 +71,8 @@ exports.viewPost = function(req, res){
 		//Only search the last 
 		var routeLengthRounded = l - (l % pps);
 
-		if (i > 0 && i < routeLengthRounded){
+		if ((i > pps && i < routeLengthRounded)
+			|| getNumSegments(route) < MIN_NUM_SEGMENTS){
 			investigatePoint(i, search_term, exactMatch, maxDistance, route, res);
 		}
 	}
@@ -92,6 +99,7 @@ function investigatePoint(i, searchTerm, exactMatch, maxDistance, route, res){
 			ratings.push(localTopListings[j]);
 		}
 		pointsCompleted++;
+		console.log(pointsCompleted + "points completed.");
 
 		console.log("Performing lookup for point " + i);
 
@@ -126,7 +134,12 @@ function filter(listings, searchTerm, exactMatch, maxDistance){
 
 
 function lookupComplete(route){
-	return pointsCompleted == Math.floor(route.coordinates.length/pointsPerSegment(route)) - 1;
+	if (getNumSegments(route) == 1){
+		return pointsCompleted == 1;
+	}
+	else{
+		return pointsCompleted == getNumSegments(route) - 2; //Math.floor(route.coordinates.length/pointsPerSegment(route)) - 1;
+	}
 }
 
 function getTop(n, listings){
