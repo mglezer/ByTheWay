@@ -70,14 +70,15 @@ ResultsDisplayer.prototype.updateDisplay = function(){
 			this.markListing(listing, ranking, 10);
 		}
 
-		g = document.createElement('div');
-		g.setAttribute("id", "results-stepper");
-		$("#results-container").append(g);
+		$("#results-container").append("<div id='results-stepper' style='text-align: center'>"
+			+"<span id='prev-stepper' class='comment'>&lt;&lt;Prev</span>"
+			+ " | "
+			+"<span id='next-stepper' class='comment'>Next&gt;&gt;</span>"
+			+"</div>");
 
 		if (this.lowIndex >= ResultsDisplayer.ENTRIES_PER_PAGE){
-			$("#results-stepper").append(
-				"<a id='prev_stepper'>Prev</a>");
-			$("#prev_stepper").click(function(event){
+			$("#prev-stepper").removeClass('comment');
+			$("#prev-stepper").click(function(event){
 				event.preventDefault();
 				this.lowIndex -= ResultsDisplayer.ENTRIES_PER_PAGE;	
 				this.updateDisplay();
@@ -85,9 +86,9 @@ ResultsDisplayer.prototype.updateDisplay = function(){
 		}
 
 		if (this.lowIndex + ResultsDisplayer.ENTRIES_PER_PAGE < this.results.topListings.length){
-			$("#results-stepper").append(
-				"<a id='next_stepper'>Next</a>");
-			$("#next_stepper").click(function(event){
+			$("#next-stepper").removeClass('comment');
+
+			$("#next-stepper").click(function(event){
 				event.preventDefault();
 				this.lowIndex += ResultsDisplayer.ENTRIES_PER_PAGE;	
 				this.updateDisplay();
