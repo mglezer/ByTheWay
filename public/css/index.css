@@ -77,7 +77,7 @@ div#sticker {
 }
 
 h3.rest_title{
-    font-family: "HelveticaNeue-CondensedBold";
+    font-family: "HelveticaNeue-CondensedBold", "Helvetica Neue";
     font-size: 20px;
     margin-top:0;
     margin-bottom: 5px;
