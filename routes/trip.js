@@ -19,7 +19,7 @@ var GRANULARITY = 10,
 	NUM_LISTINGS = 10,
 	SHOW_ALL = -1, //sentinal value for showing all results;
 	MILES_PER_SEGMENT = 20,
-	SEARCH_RADIUS = 22759.6 //sqrt(200) miles, in meters;
+	SEARCH_RADIUS = 32186.9; //20 miles, in meters
 
 var ratings,
 	pointsCompleted;
