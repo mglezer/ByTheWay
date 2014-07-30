@@ -7,13 +7,13 @@ function ResultsDisplayer($container, $map_canvas){
 	this.map = new google.maps.Map(this.$map_canvas[0], {});
 
 	this.markers = [];
-	this.lowIndex = 0;
 }
 
 ResultsDisplayer.ENTRIES_PER_PAGE = 10;
 
 ResultsDisplayer.prototype.handleRecs = function(data){
 	this.results = data;
+	this.lowIndex = 0;
 	this.updateDisplay();
 }
 
