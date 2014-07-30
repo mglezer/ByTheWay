@@ -56,7 +56,7 @@ ResultsDisplayer.prototype.updateDisplay = function(){
 						+ "<h3 class='rest_title'>" + (ranking + 1) + ". <a href='" + listing['url'] + "' target='_blank'>" + listing['name'] + "</a></h3>"
 						+ "<div class='rest_rating'><img class='rest_rating_image' src='" + listing['rating_img_url'] + "'></img>"
 						+ " " + listing['review_count'] + " reviews</div>"
-						+ "<span class='rest_category'>" + listing['categories'][0][0] + "</span>"
+						+ "<span class='rest_category'>" + (listing['categories'] !== undefined ? listing['categories'][0][0] : "") + "</span>"
 					+ "</div>"
 				+ "</td>"
 				+ "</tr>");
