@@ -103,12 +103,13 @@ ResultsDisplayer.getNextTimeout = function(timeout){
 
 ResultsDisplayer.prototype.markListing = function(listing, ranking, timeout){
 	var marker;
+	var imageURL = "http://maps.google.com/mapfiles/kml/paddle/" + 
+		((ranking % 10) + 1) + ".png";
+
 	if (listing['location']['coordinate'] != undefined){
 		var myLatlng = new google.maps.LatLng(
 			listing['location']['coordinate']['latitude'],
 			listing['location']['coordinate']['longitude']);
-
-		var imageURL = "http://maps.google.com/mapfiles/kml/paddle/" + (rank <= 10 ? rank : "red-blank") + ".png";
 
 		marker = new google.maps.Marker({
 		      position: myLatlng,
