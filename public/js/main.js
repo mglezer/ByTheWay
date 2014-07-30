@@ -25,6 +25,12 @@ ResultsDisplayer.prototype.clearMarkers = function(){
 	this.markers = [];
 }
 
+ResultsDisplayer.prototype.shouldShow = function(listing){
+	var ind = this.results.topListings.indexOf(listing);
+	return  ind >= this.lowIndex 
+			&& ind < this.lowIndex + ResultsDisplayer.ENTRIES_PER_PAGE;
+}
+
 ResultsDisplayer.prototype.updateDisplay = function(){
 	this.clearMarkers();
 
@@ -61,7 +67,7 @@ ResultsDisplayer.prototype.updateDisplay = function(){
 				+ "</td>"
 				+ "</tr>");
 
-			this.markListing(listing, i + 1);
+			this.markListing(listing, ranking, 10);
 		}
 
 		g = document.createElement('div');
@@ -90,7 +96,11 @@ ResultsDisplayer.prototype.updateDisplay = function(){
 	}
 }
 
-ResultsDisplayer.prototype.markListing = function(listing, rank){
+ResultsDisplayer.getNextTimeout = function(timeout){
+	return 10 + Math.random()*(timeout*2);
+}
+
+ResultsDisplayer.prototype.markListing = function(listing, ranking, timeout){
 	var marker;
 	if (listing['location']['coordinate'] != undefined){
 		var myLatlng = new google.maps.LatLng(
@@ -130,34 +140,45 @@ ResultsDisplayer.prototype.markListing = function(listing, rank){
 				+ ", " + listing['location']['city'] 
 				+ ", " + listing['location']['state_code'] 
 				+ " " + listing['location']['postal_code'];
-		this.geocoder.geocode( {address: streetAddress},
-			function(results, status) {
-			     if (status == google.maps.GeocoderStatus.OK) {
-			       marker = new google.maps.Marker({
-			           map: this.map,
-			           position: results[0].geometry.location,
-			           title: listing['name']
-			       });
-			       this.markers.push(marker);
 
-			       var contentString = "<img src = '" + listing['image_url'] + "'></img>"
-			       					+ "<div>"
-			       					+ "<h3>" + listing['name'] + "</h3>" 
-			       					+ "<img src = '" + listing['rating_img_url'] + "'</img>"
-			       					+ "</div>";
+		var sendRequest = function(){
+			this.geocoder.geocode( {address: streetAddress},
+				function(results, status) {
+				     if (status == google.maps.GeocoderStatus.OK) {
+				     	if (this.shouldShow(listing)){
+				     		console.log(listing['id'] + " was successfully geocoded using timeout " + timeout +".");
+							marker = new google.maps.Marker({
+							   map: this.map,
+							   position: results[0].geometry.location,
+							   title: listing['name']
+							});
+							this.markers.push(marker);
 
-			       var infowindow = new google.maps.InfoWindow({
-			       	content: contentString
-			       });
+							var contentString = "<img src = '" + listing['image_url'] + "'></img>"
+												+ "<div>"
+												+ "<h3>" + listing['name'] + "</h3>" 
+												+ "<img src = '" + listing['rating_img_url'] + "'</img>"
+												+ "</div>";
 
-			       google.maps.event.addListener(marker, 'click', function(){
-			       	infowindow.open(this.map, marker);
-			       });
+							var infowindow = new google.maps.InfoWindow({
+								content: contentString
+							});
 
-			     } else {
-			       alert("Geocode was not successful for the following reason: " + status);
-			     }
-		  }.bind(this));
+							google.maps.event.addListener(marker, 'click', function(){
+								infowindow.open(this.map, marker);
+							});
+					   }
+
+				     } else {
+				       console.log("Geocode was not successful for the following reason: " + status);
+				       timeout = ResultsDisplayer.getNextTimeout(timeout); //exponential backoff
+				       console.log(listing['id'] + " is timing out with value " + timeout);
+				       setTimeout(sendRequest, timeout);
+				     }
+			  }.bind(this));
+		}.bind(this);
+		timeout = ResultsDisplayer.getNextTimeout(timeout);
+		setTimeout(sendRequest, timeout);
 	}
 
 	else return;
