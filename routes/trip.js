@@ -97,9 +97,9 @@ function investigatePoint(i, searchTerm, exactMatch, maxDistance, route, res){
 		// console.log(error);
 		// console.log(data);
 
-		var numListingsShown = NUM_LISTINGS; //exactMatch ? SHOW_ALL : NUM_LISTINGS;
+		// var numListingsShown = exactMatch ? SHOW_ALL : NUM_LISTINGS;
 		var filteredListings = filter(data.businesses, searchTerm, exactMatch, maxDistance);
-		var localTopListings = getTop(numListingsShown, filteredListings);
+		var localTopListings = filteredListings; //getTop(numListingsShown, filteredListings);
 
 		console.log("Pushing " + localTopListings + " onto ratings array");
 
@@ -107,6 +107,7 @@ function investigatePoint(i, searchTerm, exactMatch, maxDistance, route, res){
 		// ratings = ratings.concat(localTopListings);
 
 		for (var j = 0; j < localTopListings.length; j++){
+			localTopListings[j].segment = i;
 			ratings.push(localTopListings[j]);
 		}
 		pointsCompleted++;
@@ -119,7 +120,7 @@ function investigatePoint(i, searchTerm, exactMatch, maxDistance, route, res){
 				// console.log("Ratings is not null!");
 				// console.log(ratings);
 			}
-			var globalTopListings = getTop(numListingsShown, ratings);
+			var globalTopListings = getTop(numListingsShown, ratings, exactMatch);
 			console.log("Found global maximum!");
 			// res.render('trip', {data: globalTopListings});
 			res.json({topListings: globalTopListings});
@@ -132,7 +133,8 @@ function filter(listings, searchTerm, exactMatch, maxDistance){
 	var ret = [];
 	for (var i = 0; i < listings.length; i++){
 		var listing = listings[i];
-		if (!exactMatch || listing['name'].toLowerCase().indexOf(searchTerm.toLowerCase()) > -1){
+		if ((!exactMatch && listing.rating >= 4)
+			|| (exactMatch && listing['name'].toLowerCase().indexOf(searchTerm.toLowerCase()) > -1)){
 			// var distance = toMiles(parseInt(listing['distance']));
 			// if (maxDistance == UNLIMITED_MILES || distance <= maxDistance){
 				ret.push(listing);
@@ -153,16 +155,23 @@ function lookupComplete(route){
 	}
 }
 
-function getTop(n, listings){
+function getTop(n, listings, exactMatch){
 	var uniqListings = getUnique(listings);
-	uniqListings.sort(compListings);
 
-	if (uniqListings.length < n || n == SHOW_ALL){
-		return uniqListings.slice(0).reverse();
+	if (exactMatch){
+		uniqListings.sort(locationComp);
 	}
-	else {
-		return uniqListings.slice(uniqListings.length - n, uniqListings.length).reverse();
+	else{
+		uniqListings.sort(compListings);
 	}
+
+	return uniqListings.slice(0).reverse();
+	// if (uniqListings.length < n || n == SHOW_ALL){
+	// 	return uniqListings.slice(0).reverse();
+	// }
+	// else {
+	// 	return uniqListings.slice(uniqListings.length - n, uniqListings.length).reverse();
+	// }
 }
 
 function getUnique(listings){
@@ -188,6 +197,18 @@ function compListings(a, b){
 	}
 	else 
 		return -1;
+}
+
+function locationComp(a, b){
+	if (a.segment < b.segment){
+		return 1;
+	}
+	else if (a.segment == b.segment){
+		return 0;
+	}
+	else{
+		return -1;
+	}
 }
 
 //Returns the highest rated listing among an array of Yelp listings
