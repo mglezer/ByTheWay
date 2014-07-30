@@ -57,6 +57,11 @@ div#sticker {
     max-height:400px;
     max-width:400px;
     border: 1px solid #ccccc8;
+
+    /*Cross-browser support for refreshing maps graphics*/
+    -moz-transform:translateZ(0px);
+    -ms-transform:translateZ(0px);
+    -o-transform:translateZ(0px);
 }
 
 #results-container {
