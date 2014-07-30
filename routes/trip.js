@@ -49,6 +49,17 @@ function pointsPerSegment(route){
 exports.viewPost = function(req, res){
 	var route = JSON.parse(req.param('directions'));
 	var search_term = req.param('search_term');
+
+	if (route === undefined 
+		|| route === null 
+		|| route.coordinates === undefined 
+		|| route.distance === null
+		|| route.coordinates instanceof Array === false
+		|| route.coordinates.length === 0){
+		res.send(400);
+		return;
+	}
+
 	console.log("Search term is: " + search_term);
 	ratings = [];
 	pointsCompleted = 0;
