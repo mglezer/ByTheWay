@@ -37,6 +37,7 @@ td:nth-child(1){
 td:nth-child(3){
     width: 30%;
     padding-left: 5px;
+    font-size: 14px;
 }
 
 .comment {
