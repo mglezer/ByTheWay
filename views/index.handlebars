@@ -21,10 +21,11 @@
 		<tr>
 			<td>Start</td>
 			<td><input id="start" type="text" name="begin" value = "Seattle, WA"></td>
+			<td><a href="" id="cur-location"></a></td>
 		</tr>
 		<tr>
 			<td>End</td>
-			<td><input id="end" type="text" name="end" value = "San Francisco, CA"></td>
+			<td><input id="end" type="text" name="end"></td>
 		</tr>
 		<tr>
 			<td>Search</td>
@@ -63,6 +64,14 @@
 		var requestManager = new RequestManager($("#tripForm"), $("#start"), 
 					   $("#end"), $("#my-map-canvas"), $("#results-container"));
 		setUpScrolling();
+		if (navigator.geolocation){
+			$("#cur-location").text("Use current location");
+			$("#cur-location").click(function(event) {
+				event.preventDefault();
+				$("#start").val("Loading location...");
+				getLocation();
+			});
+		}
 	});
 
 	function setUpScrolling(){
@@ -78,6 +87,16 @@
 		        s.removeClass("stick"); 
 		    }
 		});
+	function getLocation() {
+	    if (navigator.geolocation) {
+	        navigator.geolocation.getCurrentPosition(showPosition);
+	    } else {
+	        console.log("Geolocation is not supported by this browser.");
+	    }
+	}
+	function showPosition(position) {
+	    $("#start").val(position.coords.latitude + ", " +
+	    + position.coords.longitude); 
 	}
 </script>
 
