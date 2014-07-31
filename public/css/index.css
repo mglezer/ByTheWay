@@ -5,7 +5,38 @@
 
 body {
     font-family: Helvetica;
-    font-size: 14px;
+}
+
+h2 {
+    font-size: 30px;
+}
+
+h3 {
+    font-size: 22px;
+}
+
+table{
+    table-layout: fixed;
+    width:100%;
+    max-width: 418px;
+    margin:0;
+}
+
+input[type="text"]{
+    width: 90%;
+}
+
+td:nth-child(2){
+    width: 50%;
+}
+
+td:nth-child(1){
+    width: 20%;
+}
+
+td:nth-child(3){
+    width: 30%;
+    padding-left: 5px;
 }
 
 .comment {
