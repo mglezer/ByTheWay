@@ -60,8 +60,8 @@ ResultsDisplayer.prototype.updateDisplay = function(){
 			var ranking = this.lowIndex + i;
 			var listing = this.results.topListings[this.lowIndex + i];
 			$("#results-table").append(
-				"<tr class='listing_container' id = '" + listing['id'] + "'>"
-				+"<td>"
+				"<tr id = '" + listing['id'] + "'>"
+				+"<td class='listing_container'>"
 					+ "<div class='image_container'>"
 						+ "<img class='rest_image' src='" 
 							+ (listing['image_url'] === undefined ? "images/yelp_logo.png" : listing['image_url']) 

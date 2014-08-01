@@ -183,3 +183,7 @@ input {
     margin-top: 5px;
     margin-bottom: 50px;
 }
+
+.listing_container {
+    border-bottom: 1pt solid #ccccc8;
+}
