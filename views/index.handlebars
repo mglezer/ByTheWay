@@ -72,6 +72,14 @@
 				getLocation();
 			});
 		}
+
+		// WORKAROUND: converting vh to px
+		$element = $('#my-map-canvas');
+		function fixMobileSafariViewport() {
+		  $element.css('height', window.innerHeight * 0.2);
+		}
+
+		fixMobileSafariViewport();
 	});
 
 	function setUpScrolling(){
