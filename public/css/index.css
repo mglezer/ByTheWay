@@ -5,6 +5,7 @@
 
 body {
     font-family: Helvetica;
+    margin: 0;
 }
 
 h2 {
@@ -69,19 +70,44 @@ div#sticker {
     background:#AAA;
     width:190px;
 }
-.stick {
-    position:fixed;
-    top:5px;
-}
+
 #outer-container {
     width: 100%; 
-    height: 1000px;
 }
 
-#map-container {
-    height: 100%;
-    width: 60%;
-    float: right;
+.stick {
+    position:fixed;
+    top:0px;
+}
+
+@media only screen and (max-width: 480px) { /* iPhone, Android rules here */
+    #map-container {
+        height: 100%;
+        width: 100%;
+    }
+    #results-container{
+        width: 100%;
+    }
+}
+
+@media only screen and (min-width: 480px) { 
+    #map-container {
+        height: 100%;
+        width: 60%;
+        float: right;
+    }
+
+    #my-map-canvas{
+        height: 100%; 
+    }
+
+    #outer-container{
+        height: 1000px;
+    }
+    #results-container {
+        float: left;
+        width: 40%;
+    }
 }
 
 .invisible{
@@ -90,7 +116,6 @@ div#sticker {
 
 #my-map-canvas {
     width: 100%; 
-    height: 100%; 
     max-height:400px;
     max-width:400px;
     border: 1px solid #ccccc8;
@@ -101,10 +126,6 @@ div#sticker {
     -o-transform:translateZ(0px);
 }
 
-#results-container {
-    float: left;
-    width: 40%;
-}
 
 .image_container {
     width: 23%;
