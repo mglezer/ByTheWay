@@ -20,6 +20,10 @@ ResultsDisplayer.prototype.handleRecs = function(data){
 	this.results = data;
 	this.lowIndex = 0;
 	this.updateDisplay();
+
+	$('html, body').animate({
+	       scrollTop: this.$map_canvas.offset().top
+	   }, 1000);
 }
 
 ResultsDisplayer.prototype.clearMarkers = function(){
