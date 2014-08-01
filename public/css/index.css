@@ -139,11 +139,14 @@ div#sticker {
     color: #555;
 }
 
-h3.rest_title{
+.body_title{
     font-family: "HelveticaNeue-CondensedBold", "Helvetica Neue";
     font-size: 20px;
     margin-top:0;
     margin-bottom: 5px;
+}
+
+h3.body_title{
     color: black;
 }
 
@@ -162,7 +165,7 @@ h3.rest_title{
 
 }
 
-.rest_title a {
+.body_title a {
     text-decoration: none;
     color: inherit;
 }
@@ -174,4 +177,9 @@ h1, h2, h3 {
 
 input {
     font-size: 18px;
+}
+
+#results-stepper{
+    margin-top: 5px;
+    margin-bottom: 50px;
 }

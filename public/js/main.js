@@ -68,7 +68,7 @@ ResultsDisplayer.prototype.updateDisplay = function(){
 						+ "'></img>" 
 					+ "</div>"
 					+ "<div class='desc_container'>"
-						+ "<h3 class='rest_title'>" + (ranking + 1) + ". <a href='" + listing['url'] + "' target='_blank'>" + listing['name'] + "</a></h3>"
+						+ "<h3 class='body_title'>" + (ranking + 1) + ". <a href='" + listing['url'] + "' target='_blank'>" + listing['name'] + "</a></h3>"
 						+ "<div class='rest_rating'><img class='rest_rating_image' src='" + listing['rating_img_url'] + "'></img>"
 						+ " " + listing['review_count'] + " reviews</div>"
 						+ "<span class='rest_category'>" + (listing['categories'] !== undefined ? listing['categories'][0][0] : "") + "</span>"
@@ -80,9 +80,9 @@ ResultsDisplayer.prototype.updateDisplay = function(){
 		}
 
 		$("#results-container").append("<div id='results-stepper' style='text-align: center'>"
-			+"<span id='prev-stepper' class='comment'>&lt;&lt;Prev</span>"
+			+"<span id='prev-stepper' class='comment body_title'>Prev</span>"
 			+ " | "
-			+"<span id='next-stepper' class='comment'>Next&gt;&gt;</span>"
+			+"<span id='next-stepper' class='comment body_title'>Next</span>"
 			+"</div>");
 
 		if (this.lowIndex >= ResultsDisplayer.ENTRIES_PER_PAGE){
