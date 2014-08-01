@@ -150,6 +150,10 @@ h3.body_title{
     color: black;
 }
 
+#sort-selector-container{
+    float: right;
+    font-size: 14px;
+}
 .rest_category{
 /*    color: gray;
 */    font-family: "Helvetica";

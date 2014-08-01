@@ -18,6 +18,7 @@ ResultsDisplayer.ENTRIES_PER_PAGE = 10;
 
 ResultsDisplayer.prototype.handleRecs = function(data){
 	this.results = data;
+	this.sortedBy = this.results.sortedBy;
 	this.lowIndex = 0;
 	this.updateDisplay();
 
@@ -40,6 +41,44 @@ ResultsDisplayer.prototype.shouldShow = function(listing){
 			&& ind < this.lowIndex + ResultsDisplayer.ENTRIES_PER_PAGE;
 }
 
+ResultsDisplayer.ratingsComp = function(a, b){
+	if (a.rating > b.rating || (a.rating == b.rating && a.review_count > b.review_count)){
+		return -1;
+	}
+	else if (a.rating == b.rating && a.review_count == b.review_count){
+		return 0;
+	}
+	else 
+		return 1;
+}
+
+ResultsDisplayer.locationComp = function(a, b){
+	if (a.segment < b.segment){
+		return -1;
+	}
+	else if (a.segment == b.segment){
+		return 0;
+	}
+	else{
+		return 1;
+	}
+}
+
+
+ResultsDisplayer.prototype.resort = function(){
+	var val = $("#sort-selector").val();
+	if (val == 'location'){
+		this.results.topListings.sort(ResultsDisplayer.locationComp);
+		this.sortedBy = 'location';
+	}
+	else if (val == 'rating'){
+		this.results.topListings.sort(ResultsDisplayer.ratingsComp);
+		this.sortedBy = 'rating';
+	}
+	this.lowIndex = 0;
+	this.updateDisplay();
+}
+
 ResultsDisplayer.prototype.updateDisplay = function(){
 	this.clearMarkers();
 
@@ -49,6 +88,17 @@ ResultsDisplayer.prototype.updateDisplay = function(){
 	}
 	else{
 		this.$container.empty(); //clear out the old results
+
+		$("#results-container").append("<div id='sort-selector-container'>Sort by:  <select id='sort-selector'>"
+			+ "<option value='rating'>Rating</option>"
+			+ "<option value='location'>Location</option>"
+			+ "</select>"
+			+ "</div>");
+		$("#sort-selector").change(this.resort.bind(this));
+		if (this.sortedBy !== undefined){
+			$("#sort-selector").val(this.sortedBy);
+		}
+
 		g = document.createElement('table');
 		g.setAttribute("id", "results-table");
 

@@ -89,6 +89,10 @@ exports.viewPost = function(req, res){
 	}
 }
 
+function getSortMethod(exactMatch){
+	return (exactMatch ? 'location' : 'rating');
+}
+
 function investigatePoint(i, searchTerm, exactMatch, maxDistance, route, res){
 	yelp.search({term: searchTerm, 
 		radius_filter: SEARCH_RADIUS,
@@ -123,7 +127,8 @@ function investigatePoint(i, searchTerm, exactMatch, maxDistance, route, res){
 			var globalTopListings = getTop(ratings, exactMatch);
 			console.log("Found global maximum!");
 			// res.render('trip', {data: globalTopListings});
-			res.json({topListings: globalTopListings});
+			var sortedBy = getSortMethod(exactMatch);
+			res.json({topListings: globalTopListings, sortedBy: sortedBy});
 			// console.log(JSON.stringify(globalTopListings));
 		}
 	});
