@@ -154,6 +154,11 @@ h3.body_title{
     float: right;
     font-size: 14px;
 }
+.rest_addr {
+    font-size: 14px;
+    color: black;
+}
+
 .rest_category{
 /*    color: gray;
 */    font-family: "Helvetica";
