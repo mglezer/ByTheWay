@@ -4,7 +4,12 @@ function ResultsDisplayer($container, $map_canvas){
 	this.results = null;
 	this.geocoder = new google.maps.Geocoder();
 	this.$map_canvas = $map_canvas;
-	this.map = new google.maps.Map(this.$map_canvas[0], {});
+	this.map = new google.maps.Map(this.$map_canvas[0], {
+		mapTypeControl: false,
+		panControl: false,
+		zoomControl: false,
+		streetViewControl: false
+	});
 
 	this.markers = [];
 }
