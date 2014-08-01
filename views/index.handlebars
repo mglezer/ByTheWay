@@ -91,8 +91,14 @@
 		    // s.html("Distance from top:" + pos.top + "<br />Scroll position: " + windowpos);
 		    if (windowpos >= pos.top) {
 		        s.addClass("stick");
+		        if (s.parent().has("#place-holder").length == 0){
+			        var $place_holder = $("<div>", {id: "place-holder"});
+			        $place_holder.css({'height': s.css("height")});
+			        s.parent().append($place_holder);
+			    }
 		    } else {
 		        s.removeClass("stick"); 
+		        $("#place-holder").remove();
 		    }
 		});
 	}
